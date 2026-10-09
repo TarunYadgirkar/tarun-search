@@ -1,8 +1,17 @@
-# Tarun Search
+<p align="center">
+  <img src="build/icon.png" width="128" alt="Tarun Search icon">
+</p>
 
-A calm, fast, private web browser in the style of Arc: your tabs live in a tidy sidebar, **spaces** keep different parts of your life apart, and a **command bar** puts everything one keystroke away.
+<h1 align="center">Tarun Search</h1>
 
-It runs on macOS, Windows and Linux.
+<p align="center">
+  A calm, fast, private web browser. Your tabs live in a tidy sidebar, <b>spaces</b> keep different parts of your life apart, and a <b>command bar</b> puts everything one keystroke away.<br>
+  For <b>macOS</b>, <b>Windows</b> and <b>Linux</b>. Free.
+</p>
+
+<p align="center">
+  <a href="https://github.com/tarunyadgirkar/tarun-search/releases/latest"><b>⬇️ Download Tarun Search</b></a>
+</p>
 
 ![Tarun Search home screen](docs/home.png)
 
@@ -26,6 +35,11 @@ The installers are not signed with a paid Apple or Microsoft developer certifica
 - **Windows:** if SmartScreen says *"Windows protected your PC"*, click **More info → Run anyway**.
 
 After that it opens normally. To make it your default browser, open **Settings → General → Make default**.
+
+<p align="center">
+  <img src="docs/command-bar.png" width="49%" alt="Command bar">
+  <img src="docs/split-dark.png" width="49%" alt="Split view in dark mode">
+</p>
 
 ## What you can do
 
@@ -67,6 +81,8 @@ Your home screen has three cards marked **?**. Click one to reveal it, or read t
 
 Keyboard shortcuts are listed in **Settings → Shortcuts**.
 
+![Peek: preview a link without leaving your page](docs/peek.png)
+
 ## Good to know
 
 Tarun Search is built on Chromium (through Electron), so websites behave just as they do in Chrome. A few honest limits:
@@ -101,3 +117,7 @@ npm run dist        # build installers for the current OS into dist/
 | `src/main/url.js`, `shortcuts.js`, `trackers.js`, `zap.js`, `menus.js` | Address-bar logic, the shortcut table, the tracker list, the Zap picker, menus |
 | `src/preload/ui-preload.js` | Gives the interface a tiny fixed API. Websites never get a preload. |
 | `src/renderer/` | The interface: sidebar, command bar, settings, onboarding (plain HTML/CSS/JS, strict CSP) |
+
+## License
+
+[MIT](LICENSE) © 2026 Tarun Yadgirkar
