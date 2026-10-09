@@ -114,8 +114,9 @@ async function shot(app, name) {
 
     await step('command bar opens a typed address in a new tab', async () => {
       await win.click('#btn-new-tab');
-      await win.waitForSelector('.palette input');
+      // Type straight away, like a fast typist: nothing may be lost while the bar opens.
       await win.keyboard.type(base + '/a');
+      await win.waitForSelector('.palette input');
       await win.keyboard.press('Enter');
       await waitFor(app, (b) => b.activeTab && b.activeTab.title === 'Page A', null, { label: 'Page A' });
       await win.waitForSelector('.tab.active .tab-title >> text=Page A');

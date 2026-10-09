@@ -1348,6 +1348,9 @@ class Browser {
       case 'history':
       case 'split':
         if (id === 'find' && !(tab && tab.wc)) return;
+        // Move keyboard focus to the browser UI right away, so keys typed while
+        // the dialog opens land in it instead of in the web page.
+        if (id !== 'toggle-sidebar' && this.win) this.win.webContents.focus();
         return ui(id);
       case 'find-next':
       case 'find-prev':

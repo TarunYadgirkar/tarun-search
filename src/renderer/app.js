@@ -24,6 +24,8 @@
   let peekCapturing = false;
   let onboardingDone = false;
   let probeCtx = null;
+  let typeAhead = ''; // keys typed while a dialog is still opening
+  let typeAheadEnter = false;
 
   document.body.classList.add('platform-' + tarun.platform);
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -746,6 +748,8 @@
     }
     if (overlayOpening) return;
     overlayOpening = true;
+    typeAhead = '';
+    typeAheadEnter = false;
     let shots = {};
     try {
       shots = await query('views:capture');
@@ -765,6 +769,18 @@
     const root = $('overlay-root');
     root.hidden = false;
     root.replaceChildren(h('div', { class: 'scrim', onmousedown: closeOverlay }), build());
+    const auto = root.querySelector('[data-autofocus]');
+    if (auto) {
+      auto.focus();
+      // Replay anything typed while the dialog was opening.
+      if (typeAhead) {
+        auto.value = auto.dataset.replace ? typeAhead : auto.value + typeAhead;
+        auto.dispatchEvent(new Event('input'));
+      }
+      if (typeAheadEnter) auto.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    }
+    typeAhead = '';
+    typeAheadEnter = false;
   }
 
   function closeOverlay() {
@@ -819,7 +835,7 @@
     if (mode === 'edit' && !tab) mode = 'new';
     const prefill = initial != null ? initial : mode === 'edit' ? tab.url : '';
     openOverlay('palette', () => {
-      const input = h('input', { type: 'text', spellcheck: 'false', autocomplete: 'off', placeholder: mode === 'split' ? 'Open a page or tab beside this one…' : `Search ${engineName()}, type a URL, or a command…`, value: prefill });
+      const input = h('input', { type: 'text', spellcheck: 'false', autocomplete: 'off', dataset: mode === 'edit' ? { autofocus: '1', replace: '1' } : { autofocus: '1' }, placeholder: mode === 'split' ? 'Open a page or tab beside this one…' : `Search ${engineName()}, type a URL, or a command…`, value: prefill });
       const results = h('div', { class: 'palette-results' });
       let items = [];
       let sel = 0;
@@ -943,8 +959,7 @@
       });
 
       setTimeout(() => {
-        input.focus();
-        if (mode === 'edit') input.select();
+        if (mode === 'edit' && input.value === prefill) input.select();
       }, 0);
       update();
       const label = MODE_LABEL[mode];
@@ -1644,6 +1659,21 @@
   });
 
   // ---- keyboard inside the UI
+  // While a dialog is opening (the page picture is being taken), remember typed keys.
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (!overlayOpening || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+      if (e.key.length === 1) typeAhead += e.key;
+      else if (e.key === 'Backspace') typeAhead = typeAhead.slice(0, -1);
+      else if (e.key === 'Enter') typeAheadEnter = true;
+      else return;
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    true,
+  );
+
   document.addEventListener('keydown', (e) => {
     if (e.defaultPrevented) return;
     if (e.key === 'Escape') {
