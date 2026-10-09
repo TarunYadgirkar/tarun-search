@@ -102,7 +102,7 @@ npm run test:e2e    # end-to-end test of the real app (on Linux: xvfb-run -a npm
 npm run dist        # build installers for the current OS into dist/
 ```
 
-**Releasing:** push a tag like `v1.0.1` (bump `version` in `package.json` first). The [GitHub Actions workflow](.github/workflows/build.yml) tests the app, builds the macOS, Windows and Linux installers, and attaches them to a GitHub Release.
+**Releasing:** bump `version` in `package.json`, then either push a tag like `v1.0.1`, or open **Actions → Tarun Search → Run workflow** and tick **release**. The [GitHub Actions workflow](.github/workflows/build.yml) tests the app, builds the macOS, Windows and Linux installers, and attaches them to a GitHub Release.
 
 ### How it's built
 

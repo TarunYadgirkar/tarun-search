@@ -9,6 +9,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish a release for the version in package.json (e.g. tick this to release 1.0.0)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -80,14 +85,14 @@ jobs:
             dist/*.AppImage
             dist/*.deb
       - name: Attach installers to the release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release && github.ref == 'refs/heads/main')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v$(node -p "require('./package.json').version")"; fi
           shopt -s nullglob
           files=(dist/*.dmg dist/*.zip dist/*.exe dist/*.AppImage dist/*.deb)
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
-            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Tarun Search ${TAG#v}" --notes-file RELEASE_NOTES.md || true
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Tarun Search ${TAG#v}" --notes-file RELEASE_NOTES.md || true
           gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
